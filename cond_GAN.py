@@ -83,6 +83,15 @@ elif opt.dataset == 'cifar10':
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ])
     )
+##########Update MNIST###############
+elif opt.dataset == 'MNIST':
+    dataset = dset.MNIST(opt.dataroot, download=True,
+                   transform=transforms.Compose([
+                transforms.Scale(opt.imageSize),
+                       transforms.ToTensor(),
+                       transforms.Normalize((0.1307,), (0.3081,))
+                   ]))
+#############################
 assert dataset
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
                                          shuffle=True, num_workers=int(opt.workers))
