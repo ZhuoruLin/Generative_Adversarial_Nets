@@ -295,8 +295,8 @@ for epoch in range(opt.niter):
         conditions_to_plot = np.arange(num_classes).repeat(10)
         conditions_to_plot = torch.from_numpy(conditions_to_plot)
         if opt.cuda:
-            noise_to_plot.cuda()
-            conditions_to_plot.cuda()
+            noise_to_plot = noise_to_plot.cuda()
+            conditions_to_plot = conditions_to_plot.cuda()
         conditions_to_plot = Variable(conditions_to_plot)
         noise_to_plot = Variable(noise_to_plot)
         ###########################
