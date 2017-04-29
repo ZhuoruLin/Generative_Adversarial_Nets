@@ -1,3 +1,4 @@
+# %load cond_GAN.py
 from __future__ import print_function
 import argparse
 import os
@@ -12,6 +13,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
+import pickle
 
 
 parser = argparse.ArgumentParser()
@@ -183,12 +185,13 @@ class _netD(nn.Module):
 
     def forward(self, input,condition=None,embedding_dict=None):
         #Get embedding
-        emb = embedding_dict(condition).view(opt.batchSize,opt.emb_size)
+        emb = embedding_dict(condition)
         if isinstance(input.data, torch.cuda.FloatTensor) and self.ngpu > 1:
             intermediate = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
         else:
             intermediate = self.main(input)
-        to_cat = intermediate.view(opt.batchSize,-1)
+        num_samples=condition.size()[0]
+        to_cat = intermediate.view(num_samples,-1)
         catted = torch.cat([to_cat,emb],1)
         output = self.decode(catted)
 
@@ -209,22 +212,28 @@ label = torch.FloatTensor(opt.batchSize)
 real_label = 1
 fake_label = 0
 
+##################Embeddings for class label#########
+class_embeddings = nn.Embedding(embedding_dim=opt.emb_size,num_embeddings=10)
+condition = torch.LongTensor(opt.batchSize)
+#####################################################
+
 if opt.cuda:
     netD.cuda()
     netG.cuda()
     criterion.cuda()
     input, label = input.cuda(), label.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
+    #fix gpu computing for embedding
+    class_embeddings.cuda()
+    condition = condition.cuda()
 
 input = Variable(input)
 label = Variable(label)
 noise = Variable(noise)
 fixed_noise = Variable(fixed_noise)
+##############
+condition = Variable(condition)
 
-
-##################Embeddings for class label#########
-class_embeddings = nn.Embedding(embedding_dim=opt.emb_size,num_embeddings=10)
-#####################################################
 
 
 # setup optimizer
@@ -236,7 +245,7 @@ optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 
 for epoch in range(opt.niter):
     for i, (data,image_label) in enumerate(dataloader):
-        condition = Variable(image_label)
+        condition.data.resize_(image_label.size()).copy_(image_label)
         ############################
         # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
         ###########################
@@ -289,5 +298,5 @@ for epoch in range(opt.niter):
     if epoch % 10 ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
-        with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch)) as f:
+        with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch),'wb') as f:
             pickle.dump(file=f,obj=class_embeddings)
