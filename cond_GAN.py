@@ -1,4 +1,3 @@
-# %load cond_GAN.py
 from __future__ import print_function
 import argparse
 import os
@@ -300,15 +299,15 @@ for epoch in range(opt.niter):
         conditions_to_plot = Variable(conditions_to_plot)
         noise_to_plot = Variable(noise_to_plot)
         ###########################
-        if i % 100 == 0:
-#             vutils.save_image(real_cpu,
-#                     '%s/real_samples.png' % opt.outf,
-#                     normalize=True)
-            fake = netG(noise_to_plot,conditions_to_plot,class_embeddings)
-            vutils.save_image(fake.data,
-                    '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
-                    normalize=True,nrow=num_classes)
-    if epoch % 10 ==0:
+#         if i % 100 == 0:
+# #             vutils.save_image(real_cpu,
+# #                     '%s/real_samples.png' % opt.outf,
+# #                     normalize=True)
+    fake = netG(noise_to_plot,conditions_to_plot,class_embeddings)
+    vutils.save_image(fake.data,
+            '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
+            normalize=True,nrow=num_classes)
+    if epoch % 20 ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
         with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch),'wb') as f:
