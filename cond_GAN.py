@@ -69,6 +69,12 @@ if opt.dataset in ['imagenet', 'folder', 'lfw']:
                                    transforms.ToTensor(),
                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                                ]))
+    #Simon's Edit add support of conditional GAN
+    if os.path.exists(os.path.join(opt.dataroot,'.DS_Store')):
+        dataset.train_labels = [x[1]-1 for x in dataset.imgs]
+    else:
+        dataset.train_labels = [x[1] for x in dataset.imgs]
+        
 elif opt.dataset == 'lsun':
     dataset = dset.LSUN(db_path=opt.dataroot, classes=['bedroom_train'],
                         transform=transforms.Compose([
