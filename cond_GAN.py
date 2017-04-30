@@ -258,6 +258,18 @@ fixed_noise = Variable(fixed_noise)
 ##############
 condition = Variable(condition)
 
+###########################
+#create 10 plots for each condition
+noise_to_plot = torch.FloatTensor(num_classes*8, nz, 1, 1).normal_(0,1)
+conditions_to_plot = np.arange(num_classes).repeat(8)
+conditions_to_plot = torch.from_numpy(conditions_to_plot)
+if opt.cuda:
+    noise_to_plot = noise_to_plot.cuda()
+    conditions_to_plot = conditions_to_plot.cuda()
+conditions_to_plot = Variable(conditions_to_plot)
+noise_to_plot = Variable(noise_to_plot)
+
+
 
 
 # setup optimizer
@@ -311,16 +323,7 @@ for epoch in range(opt.niter):
         print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
               % (epoch, opt.niter, i, len(dataloader),
                  errD.data[0], errG.data[0], D_x, D_G_z1, D_G_z2))
-        ###########################
-        #create 10 plots for each condition
-        noise_to_plot = torch.FloatTensor(num_classes*8, nz, 1, 1).normal_(0,1)
-        conditions_to_plot = np.arange(num_classes).repeat(8)
-        conditions_to_plot = torch.from_numpy(conditions_to_plot)
-        if opt.cuda:
-            noise_to_plot = noise_to_plot.cuda()
-            conditions_to_plot = conditions_to_plot.cuda()
-        conditions_to_plot = Variable(conditions_to_plot)
-        noise_to_plot = Variable(noise_to_plot)
+
         
         ##########################
         if i % opt.printper == 0:
