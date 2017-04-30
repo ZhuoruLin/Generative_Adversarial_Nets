@@ -36,6 +36,7 @@ parser.add_argument('--outf', default='.', help='folder to output images and mod
 parser.add_argument('--manualSeed', type=int, help='manual seed')
 ##Simon's Edit
 parser.add_argument('--emb_size',type=int, default=64,help='embedding size for condition label')
+parser.add_argument('--nc',type=int,default=3,help='number of channel of image. Default 1. Change if using MNIST')
 
 opt = parser.parse_args()
 print(opt)
@@ -101,6 +102,8 @@ nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
 nc = 3
+if opt.dataset == 'MNIST':
+    nc = 1
 
 
 # custom weights initialization called on netG and netD
@@ -223,9 +226,13 @@ fake_label = 0
 
 ##################Embeddings for class label#########
 num_classes = len(np.unique(dataset.train_labels))
+if isinstance(dataset.train_labels,torch.LongTensor):
+    num_classes = len(np.unique(dataset.train_labels.numpy()))
 class_embeddings = nn.Embedding(embedding_dim=opt.emb_size,num_embeddings=num_classes)
 condition = torch.LongTensor(opt.batchSize)
 #####################################################
+#print('num_classes:%s'%(num_classes))
+#print('class_embeddings_size:(%s,%s)'%(class_embeddings.weight.data.size()))
 
 if opt.cuda:
     netD.cuda()
