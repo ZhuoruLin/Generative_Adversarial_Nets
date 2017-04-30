@@ -313,8 +313,8 @@ for epoch in range(opt.niter):
                  errD.data[0], errG.data[0], D_x, D_G_z1, D_G_z2))
         ###########################
         #create 10 plots for each condition
-        noise_to_plot = torch.FloatTensor(num_classes*10, nz, 1, 1).normal_(0,1)
-        conditions_to_plot = np.arange(num_classes).repeat(10)
+        noise_to_plot = torch.FloatTensor(num_classes*8, nz, 1, 1).normal_(0,1)
+        conditions_to_plot = np.arange(num_classes).repeat(8)
         conditions_to_plot = torch.from_numpy(conditions_to_plot)
         if opt.cuda:
             noise_to_plot = noise_to_plot.cuda()
@@ -330,8 +330,8 @@ for epoch in range(opt.niter):
             fake = netG(noise_to_plot,conditions_to_plot,class_embeddings)
             vutils.save_image(fake.data,
                     '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
-                    normalize=True,nrow=num_classes)
-    if epoch % 20 ==0:
+                    normalize=True)
+    if epoch % 10 ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
         with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch),'wb') as f:
