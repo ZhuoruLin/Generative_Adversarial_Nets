@@ -85,7 +85,7 @@ elif opt.dataset == 'cifar10':
     )
 ##########Update MNIST###############
 elif opt.dataset == 'MNIST':
-    dataset = dset.MNIST(opt.dataroot, download=True,
+    dataset = dset.MNIST(opt.dataroot,train=True, download=True,
                    transform=transforms.Compose([
                 transforms.Scale(opt.imageSize),
                        transforms.ToTensor(),
