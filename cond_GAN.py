@@ -37,6 +37,7 @@ parser.add_argument('--manualSeed', type=int, help='manual seed')
 ##Simon's Edit
 parser.add_argument('--emb_size',type=int, default=64,help='embedding size for condition label')
 parser.add_argument('--nc',type=int,default=3,help='number of channel of image. Default 1. Change if using MNIST')
+parser.add_argument('--printper',type=int,default=100,help='Number of steps each print')
 
 opt = parser.parse_args()
 print(opt)
@@ -314,15 +315,16 @@ for epoch in range(opt.niter):
             conditions_to_plot = conditions_to_plot.cuda()
         conditions_to_plot = Variable(conditions_to_plot)
         noise_to_plot = Variable(noise_to_plot)
-        ###########################
-#         if i % 100 == 0:
-# #             vutils.save_image(real_cpu,
-# #                     '%s/real_samples.png' % opt.outf,
-# #                     normalize=True)
-    fake = netG(noise_to_plot,conditions_to_plot,class_embeddings)
-    vutils.save_image(fake.data,
-            '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
-            normalize=True,nrow=num_classes)
+        
+        ##########################
+        if i % opt.printper == 0:
+#             vutils.save_image(real_cpu,
+#                     '%s/real_samples.png' % opt.outf,
+#                     normalize=True)
+            fake = netG(noise_to_plot,conditions_to_plot,class_embeddings)
+            vutils.save_image(fake.data,
+                    '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
+                    normalize=True,nrow=num_classes)
     if epoch % 20 ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
