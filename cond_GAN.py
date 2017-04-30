@@ -334,7 +334,7 @@ for epoch in range(opt.niter):
             vutils.save_image(fake.data,
                     '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
                     normalize=True)
-    if epoch % 10 ==0:
+    if epoch % 2 ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
         with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch),'wb') as f:
