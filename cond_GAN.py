@@ -250,7 +250,7 @@ if opt.cuda:
     input, label = input.cuda(), label.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
     #fix gpu computing for embedding
-    class_embeddings.cuda()
+    class_embeddings = class_embeddings.cuda()
     condition = condition.cuda()
 
 input = Variable(input)
