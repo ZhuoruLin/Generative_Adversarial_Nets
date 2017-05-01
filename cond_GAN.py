@@ -38,6 +38,8 @@ parser.add_argument('--manualSeed', type=int, help='manual seed')
 parser.add_argument('--emb_size',type=int, default=64,help='embedding size for condition label')
 parser.add_argument('--nc',type=int,default=3,help='number of channel of image. Default 1. Change if using MNIST')
 parser.add_argument('--printper',type=int,default=100,help='Number of steps each print')
+parser.add_argument('--emb_path',type=str,default='',help='Path to embedding (continue training)')
+parser.add_argument('--saveper',type=int,default=1,help='Number of steps each save')
 
 opt = parser.parse_args()
 print(opt)
@@ -236,10 +238,10 @@ num_classes = len(np.unique(dataset.train_labels))
 if isinstance(dataset.train_labels,torch.LongTensor):
     num_classes = len(np.unique(dataset.train_labels.numpy()))
 class_embeddings = nn.Embedding(embedding_dim=opt.emb_size,num_embeddings=num_classes)
+if opt.emb_path != '':
+    class_embeddings = pickle.load(open(opt.emb_path,'rb'))
 condition = torch.LongTensor(opt.batchSize)
 #####################################################
-#print('num_classes:%s'%(num_classes))
-#print('class_embeddings_size:(%s,%s)'%(class_embeddings.weight.data.size()))
 
 if opt.cuda:
     netD.cuda()
@@ -334,7 +336,7 @@ for epoch in range(opt.niter):
             vutils.save_image(fake.data,
                     '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
                     normalize=True)
-    if epoch % 2 ==0:
+    if epoch % opt.saveper ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
         with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch),'wb') as f:
