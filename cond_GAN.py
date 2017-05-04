@@ -250,7 +250,7 @@ if opt.cuda:
     input, label = input.cuda(), label.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
     #fix gpu computing for embedding
-    class_embeddings = class_embeddings.cuda()
+    class_embeddings.cuda()
     condition = condition.cuda()
 
 input = Variable(input)
@@ -343,5 +343,6 @@ for epoch in range(opt.niter):
         with open('%s/embDict_epoch_%d.pth'%(opt.outf,epoch),'wb') as f:
             if opt.cuda:
                 pickle.dump(file=f,obj=class_embeddings.cpu())
+                class_embeddings.cuda()
             else:
                 pickle.dump(file=f,obj=class_embeddings)
