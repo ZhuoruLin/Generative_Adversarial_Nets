@@ -193,12 +193,12 @@ class _netD(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
             #state size. (ndf*8) x 4 x 4
             #nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),#original
-            nn.Conv2d(ndf*8,opt.emb_size,4,1,0,bias=False),
+            nn.Conv2d(ndf*8,opt.nz,4,1,0,bias=False),
             # Simon's Edit
             #nn.Sigmoid()
         )
         self.decode = nn.Sequential(
-            nn.Linear(2*opt.emb_size,opt.emb_size),
+            nn.Linear(opt.nz+opt.emb_size,opt.emb_size),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Linear(opt.emb_size,1),
             nn.Sigmoid()
@@ -250,7 +250,7 @@ if opt.cuda:
     input, label = input.cuda(), label.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
     #fix gpu computing for embedding
-    class_embeddings = class_embeddings.cuda()
+    class_embeddings.cuda()
     condition = condition.cuda()
 
 input = Variable(input)
@@ -336,7 +336,6 @@ for epoch in range(opt.niter):
             vutils.save_image(fake.data,
                     '%s/fake_samples_epoch_%03d.png' % (opt.outf, epoch),
                     normalize=True)
-
     if epoch % opt.saveper ==0:
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
