@@ -18,7 +18,7 @@ import numpy as np
 import urllib.request
 
 embdict_url = 'https://s3.amazonaws.com/ds1008a3/embDict_cpu.pth'
-netG_url ='https://s3.amazonaws.com/ds1008a3/netG.pth'
+netG_url ='https://s3.amazonaws.com/ds1008a3/netG_cpu.pth'
 print('Downloading model files...')
 with urllib.request.urlopen(embdict_url) as response, open('embDict_cpu.pth', 'wb') as out_file:
     data = response.read() 
