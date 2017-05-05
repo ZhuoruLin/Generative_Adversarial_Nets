@@ -14,11 +14,23 @@ import torchvision.utils as vutils
 from torch.autograd import Variable
 import pickle
 import numpy as np
+import urllib.request
 
+embdict_url = 'https://s3.amazonaws.com/ds1008a3/embDict_cpu.pth'
+netG_url ='https://s3.amazonaws.com/ds1008a3/netG.pth'
+print('Downloading model files...')
+with urllib.request.urlopen(embdict_url) as response, open('embDict_cpu.pth, 'wb') as out_file:
+    data = response.read() 
+    out_file.write(data)
+
+with urllib.request.urlopen(netG_url) as response, open('netG.pth, 'wb') as out_file:
+    data = response.read() 
+    out_file.write(data)
+print('Download completed.')
 #Argument Parsing
 parser = argparse.ArgumentParser()
-parser.add_argument('--emb_path',type=str,help='Path to embedding (continue training)')
-parser.add_argument('--netG', help="path to netG (to continue training)")
+parser.add_argument('--emb_path',default='embDict_cpu.pth',type=str,help='Path to embedding (continue training)')
+parser.add_argument('--netG',default='netG.pth', help="path to netG (to continue training)")
 
 opt = parser.parse_args()
 print(opt)
@@ -89,7 +101,7 @@ print(netG)
 #Embedding Loading#
 print('Load embeddings...')
 class_embeddings = pickle.load(open(opt.emb_path,'rb'))
-class_embeddings.cpu()
+#class_embeddings.cpu()
 num_classes = class_embeddings.num_embeddings
 emb_size = class_embeddings.embedding_dim
 #class_embeddings.cuda()
