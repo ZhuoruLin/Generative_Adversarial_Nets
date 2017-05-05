@@ -1,3 +1,4 @@
+# %load ./generate/generate.py
 from __future__ import print_function
 import argparse
 import os
@@ -19,11 +20,11 @@ import urllib.request
 embdict_url = 'https://s3.amazonaws.com/ds1008a3/embDict_cpu.pth'
 netG_url ='https://s3.amazonaws.com/ds1008a3/netG.pth'
 print('Downloading model files...')
-with urllib.request.urlopen(embdict_url) as response, open('embDict_cpu.pth, 'wb') as out_file:
+with urllib.request.urlopen(embdict_url) as response, open('embDict_cpu.pth', 'wb') as out_file:
     data = response.read() 
     out_file.write(data)
 
-with urllib.request.urlopen(netG_url) as response, open('netG.pth, 'wb') as out_file:
+with urllib.request.urlopen(netG_url) as response, open('netG.pth', 'wb') as out_file:
     data = response.read() 
     out_file.write(data)
 print('Download completed.')
