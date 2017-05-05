@@ -124,6 +124,5 @@ noise_to_plot = Variable(noise_to_plot)
 print('generating output')
 fake = netG(noise_to_plot,conditions_to_plot,class_embeddings)
 vutils.save_image(fake.data,
-        'generated_samples.png',
-        normalize=True,nrow=13)
+        'generated_samples.png',normalize=True,nrow=13)
 print('done')
